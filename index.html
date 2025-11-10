@@ -1,1 +1,52 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Book Order App</title>
+  <style>
+    body{font-family:"Noto Sans Tamil",sans-serif;background:#f2f6fb;margin:24px;}
+    .card{background:#fff;padding:18px;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,0.06);max-width:900px;}
+    button{background:#1976d2;color:#fff;border:0;padding:10px 14px;border-radius:6px;cursor:pointer;}
+    #loader{display:none;margin-left:10px;}
+    pre{white-space:pre-wrap;background:#fafafa;padding:12px;border-radius:8px;overflow:auto;}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>📚 Book Order — Live</h2>
+    <p>Backend URL: <code id="backendUrl"></code></p>
+    <button id="loadBtn">🔄 Load Books</button><span id="loader">⏳ Loading…</span>
+    <div style="margin-top:12px">
+      <pre id="out">Click "Load Books"</pre>
+    </div>
+  </div>
+
+<script>
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxLcTjPhbAxcq6so3Pk3gjgMKqjvArGmPxDBJwwENUAr1yMtNArJCo8QCABThBRT7qjwA/exec";
+document.getElementById('backendUrl').textContent = APPS_SCRIPT_URL;
+
+document.getElementById('loadBtn').addEventListener('click', async () => {
+  const out = document.getElementById('out');
+  const loader = document.getElementById('loader');
+  const btn = document.getElementById('loadBtn');
+
+  btn.disabled = true;
+  loader.style.display = 'inline';
+
+  try {
+    const res = await fetch(APPS_SCRIPT_URL + '?action=getBooks');
+    if (!res.ok) throw new Error('Network response was not ok: ' + res.status);
+    const data = await res.json();
+    out.textContent = JSON.stringify(data, null, 2);
+  } catch (err) {
+    out.textContent = 'Error: ' + err.message;
+  } finally {
+    btn.disabled = false;
+    loader.style.display = 'none';
+  }
+});
+</script>
+</body>
+</html>
 
